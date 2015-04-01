@@ -54,31 +54,31 @@ and mean_squared_error, which measure the distance between the model
 and the data, are negated.
 
 
-======================     =======================================     ==================================
-Scoring                    Function                                              Comment
-======================     =======================================     ==================================
+========================     =======================================     ==================================
+Scoring                      Function                                    Comment
+========================     =======================================     ==================================
 **Classification**
-'accuracy'                 :func:`metrics.accuracy_score`
-'average_precision'        :func:`metrics.average_precision_score`
-'f1'                       :func:`metrics.f1_score`                    for binary targets
-'f1_micro'                 :func:`metrics.f1_score`                    micro-averaged
-'f1_macro'                 :func:`metrics.f1_score`                    macro-averaged
-'f1_weighted'              :func:`metrics.f1_score`                    weighted average
-'f1_samples'               :func:`metrics.f1_score`                    by multilabel sample
-'log_loss'                 :func:`metrics.log_loss`                    requires ``predict_proba`` support
-'precision' etc.           :func:`metrics.precision_score`             suffixes apply as with 'f1'`
-'recall' etc.              :func:`metrics.recall_score`                suffixes apply as with 'f1'
-'roc_auc'                  :func:`metrics.roc_auc_score`
+'accuracy'                   :func:`metrics.accuracy_score`
+'average_precision'          :func:`metrics.average_precision_score`
+'f1'                         :func:`metrics.f1_score`                    for binary targets
+'f1_micro'                   :func:`metrics.f1_score`                    micro-averaged
+'f1_macro'                   :func:`metrics.f1_score`                    macro-averaged
+'f1_weighted'                :func:`metrics.f1_score`                    weighted average
+'f1_samples'                 :func:`metrics.f1_score`                    by multilabel sample
+'log_loss'                   :func:`metrics.log_loss`                    requires ``predict_proba`` support
+'precision' etc.             :func:`metrics.precision_score`             suffixes apply as with 'f1'
+'recall' etc.                :func:`metrics.recall_score`                suffixes apply as with 'f1'
+'roc_auc'                    :func:`metrics.roc_auc_score`
 
 **Clustering**
-'adjusted_rand_score'      :func:`metrics.adjusted_rand_score`
+'adjusted_rand_score'        :func:`metrics.adjusted_rand_score`
 
 **Regression**
-'mean_absolute_error'      :func:`metrics.mean_absolute_error`
-'mean_squared_error'       :func:`metrics.mean_squared_error`
-'median_absolute_error'    :func:`metrics.median_absolute_error`
-'r2'                       :func:`metrics.r2_score`
-======================     =======================================     ==================================
+'mean_absolute_error'        :func:`metrics.mean_absolute_error`
+'mean_squared_error'         :func:`metrics.mean_squared_error`
+'median_absolute_error'      :func:`metrics.median_absolute_error`
+'r2'                         :func:`metrics.r2_score`
+========================     =======================================     ==================================
 
 Usage examples:
 
@@ -264,7 +264,7 @@ In the following sub-sections, we will describe each of those functions,
 preceded by some notes on common API and metric definition.
 
 From binary to multiclass and multilabel
-........................................
+----------------------------------------
 
 Some metrics are essentially defined for binary classification tasks (e.g.
 :func:`f1_score`, :func:`roc_auc_score`). In these cases, by default
@@ -743,8 +743,9 @@ with a svm classifier in a binary class problem::
   >>> est = svm.LinearSVC(random_state=0)
   >>> est.fit(X, y)
   LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,
-       intercept_scaling=1, loss='l2', max_iter=1000, multi_class='ovr',
-       penalty='l2', random_state=0, tol=0.0001, verbose=0)
+       intercept_scaling=1, loss='squared_hinge', max_iter=1000,
+       multi_class='ovr', penalty='l2', random_state=0, tol=0.0001,
+       verbose=0)
   >>> pred_decision = est.decision_function([[-2], [3], [0.5]])
   >>> pred_decision  # doctest: +ELLIPSIS
   array([-2.18...,  2.36...,  0.09...])
@@ -760,8 +761,9 @@ with a svm classifier in a multiclass problem::
   >>> est = svm.LinearSVC()
   >>> est.fit(X, Y)
   LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,
-       intercept_scaling=1, loss='l2', max_iter=1000, multi_class='ovr',
-       penalty='l2', random_state=None, tol=0.0001, verbose=0)
+       intercept_scaling=1, loss='squared_hinge', max_iter=1000,
+       multi_class='ovr', penalty='l2', random_state=None, tol=0.0001,
+       verbose=0)
   >>> pred_decision = est.decision_function([[-1], [2], [3]])
   >>> y_true = [0, 2, 3]
   >>> hinge_loss(y_true, pred_decision, labels)  #doctest: +ELLIPSIS
@@ -861,7 +863,7 @@ Receiver operating characteristic (ROC)
 
 The function :func:`roc_curve` computes the
 `receiver operating characteristic curve, or ROC curve <http://en.wikipedia.org/wiki/Receiver_operating_characteristic>`_.
- Quoting Wikipedia :
+Quoting Wikipedia :
 
   "A receiver operating characteristic (ROC), or simply ROC curve, is a
   graphical plot which illustrates the performance of a binary classifier

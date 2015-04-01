@@ -15,7 +15,6 @@ Generalized Linear models.
 from __future__ import division
 from abc import ABCMeta, abstractmethod
 import numbers
-import warnings
 
 import numpy as np
 import scipy.sparse as sp
@@ -25,7 +24,7 @@ from scipy import sparse
 from ..externals import six
 from ..externals.joblib import Parallel, delayed
 from ..base import BaseEstimator, ClassifierMixin, RegressorMixin
-from ..utils import as_float_array, check_array
+from ..utils import as_float_array, check_array, check_X_y
 from ..utils.extmath import safe_sparse_dot
 from ..utils.sparsefuncs import mean_variance_axis, inplace_column_scale
 from ..utils.fixes import sparse_lsqr
@@ -348,7 +347,7 @@ class LinearRegression(LinearModel, RegressorMixin):
         self.copy_X = copy_X
         self.n_jobs = n_jobs
 
-    def fit(self, X, y, n_jobs=1):
+    def fit(self, X, y):
         """
         Fit linear model.
 
@@ -364,16 +363,9 @@ class LinearRegression(LinearModel, RegressorMixin):
         -------
         self : returns an instance of self.
         """
-        if n_jobs != 1:
-            warnings.warn("The n_jobs parameter in fit is deprecated and will "
-                          "be removed in 0.17. It has been moved from the fit "
-                          "method to the LinearRegression class constructor.",
-                          DeprecationWarning, stacklevel=2)
-            n_jobs_ = n_jobs
-        else:
-            n_jobs_ = self.n_jobs
-        X = check_array(X, accept_sparse=['csr', 'csc', 'coo'])
-        y = np.asarray(y)
+        n_jobs_ = self.n_jobs
+        X, y = check_X_y(X, y, accept_sparse=['csr', 'csc', 'coo'],
+                         y_numeric=True, multi_output=True)
 
         X, y, X_mean, y_mean, X_std = self._center_data(
             X, y, self.fit_intercept, self.normalize, self.copy_X)

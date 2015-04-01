@@ -129,8 +129,9 @@ two classes, only one model is trained::
     >>> lin_clf = svm.LinearSVC()
     >>> lin_clf.fit(X, Y) # doctest: +NORMALIZE_WHITESPACE
     LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,
-    intercept_scaling=1, loss='l2', max_iter=1000, multi_class='ovr',
-    penalty='l2', random_state=None, tol=0.0001, verbose=0)
+         intercept_scaling=1, loss='squared_hinge', max_iter=1000,
+         multi_class='ovr', penalty='l2', random_state=None, tol=0.0001,
+         verbose=0)
     >>> dec = lin_clf.decision_function([[1]])
     >>> dec.shape[1]
     4
@@ -549,14 +550,13 @@ generalization error of the classifier.
 SVC
 ---
 
-Given training vectors :math:`x_i \in R^p`, i=1,..., n, in two classes, and a
-vector :math:`y \in R^n` such that :math:`y_i \in \{1, -1\}`, SVC solves the
-following primal problem:
+Given training vectors :math:`x_i \in \mathbb{R}^p`, i=1,..., n, in two classes, and a
+vector :math:`y \in \{1, -1\}^n`, SVC solves the following primal problem:
 
 
 .. math::
 
-    \min_ {w, b, \zeta} \frac{1}{2} w^T w + C \sum_{i=1, n} \zeta_i
+    \min_ {w, b, \zeta} \frac{1}{2} w^T w + C \sum_{i=1}^{n} \zeta_i
 
 
 
@@ -571,13 +571,13 @@ Its dual is
 
 
    \textrm {subject to } & y^T \alpha = 0\\
-   & 0 \leq \alpha_i \leq C, i=1, ..., l
+   & 0 \leq \alpha_i \leq C, i=1, ..., n
 
 where :math:`e` is the vector of all ones, :math:`C > 0` is the upper bound,
 :math:`Q` is an :math:`n` by :math:`n` positive semidefinite matrix,
-:math:`Q_{ij} \equiv K(x_i, x_j)` and :math:`\phi (x_i)^T \phi (x)`
-is the kernel. Here training vectors are mapped into a higher (maybe infinite)
-dimensional space by the function :math:`\phi`.
+:math:`Q_{ij} \equiv K(x_i, x_j) = \phi (x_i)^T \phi (x_j)`
+is the kernel. Here training vectors are implicitly mapped into a higher
+(maybe infinite) dimensional space by the function :math:`\phi`.
 
 
 The decision function is:
@@ -592,10 +592,10 @@ The decision function is:
 
 .. TODO multiclass case ?/
 
-This parameters can be accessed through the members ``dual_coef_`
+This parameters can be accessed through the members ``dual_coef_``
 which holds the product :math:`y_i \alpha_i`, ``support_vectors_`` which
 holds the support vectors, and ``intercept_`` which holds the independent
-term :math:`-\rho` :
+term :math:`\rho` :
 
 .. topic:: References:
 
@@ -621,6 +621,57 @@ bound of the fraction of support vectors.
 
 It can be shown that the :math:`\nu`-SVC formulation is a reparametrization
 of the :math:`C`-SVC and therefore mathematically equivalent.
+
+
+SVR
+---
+
+Given training vectors :math:`x_i \in \mathbb{R}^p`, i=1,..., n, and a
+vector :math:`y \in \mathbb{R}^n` :math:`\varepsilon`-SVR solves the following primal problem:
+
+
+.. math::
+
+    \min_ {w, b, \zeta, \zeta^*} \frac{1}{2} w^T w + C \sum_{i=1}^{n} (\zeta_i + \zeta_i^*)
+
+
+
+    \textrm {subject to } & y_i - w^T \phi (x_i) - b \leq \varepsilon + \zeta_i,\\
+                          & w^T \phi (x_i) + b - y_i \leq \varepsilon + \zeta_i^*,\\
+                          & \zeta_i, \zeta_i^* \geq 0, i=1, ..., n
+
+Its dual is
+
+.. math::
+
+   \min_{\alpha, \alpha^*} \frac{1}{2} (\alpha - \alpha^*)^T Q (\alpha - \alpha^*) + \varepsilon e^T (\alpha + \alpha^*) - y^T (\alpha - \alpha^*)
+
+
+   \textrm {subject to } & e^T (\alpha - \alpha^*) = 0\\
+   & 0 \leq \alpha_i, \alpha_i^* \leq C, i=1, ..., n
+
+where :math:`e` is the vector of all ones, :math:`C > 0` is the upper bound,
+:math:`Q` is an :math:`n` by :math:`n` positive semidefinite matrix,
+:math:`Q_{ij} \equiv K(x_i, x_j) = \phi (x_i)^T \phi (x_j)`
+is the kernel. Here training vectors are implicitly mapped into a higher
+(maybe infinite) dimensional space by the function :math:`\phi`.
+
+The decision function is:
+
+.. math:: \sum_{i=1}^n (\alpha_i - \alpha_i^*) K(x_i, x) + \rho
+
+These parameters can be accessed through the members ``dual_coef_``
+which holds the difference :math:`\alpha_i - \alpha_i^*`, ``support_vectors_`` which
+holds the support vectors, and ``intercept_`` which holds the independent
+term :math:`\rho`
+
+.. topic:: References:
+
+ * `"A Tutorial on Support Vector Regression"
+   <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.114.4288>`_
+   Alex J. Smola, Bernhard Schölkopf -Statistics and Computing archive
+   Volume 14 Issue 3, August 2004, p. 199-222  
+
 
 .. _svm_implementation_details:
 

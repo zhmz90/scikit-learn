@@ -670,10 +670,9 @@ class KMeans(BaseEstimator, ClusterMixin, TransformerMixin):
     tol : float, default: 1e-4
         Relative tolerance with regards to inertia to declare convergence
 
-    n_jobs : int, default: 1
-        The number of jobs to use for the computation. This works by breaking
-        down the pairwise matrix into n_jobs even slices and computing them in
-        parallel.
+    n_jobs : int
+        The number of jobs to use for the computation. This works by computing
+        each of the n_init runs in parallel.
 
         If -1 all CPUs are used. If 1 is given, no parallel computing code is
         used at all, which is useful for debugging. For n_jobs below -1,
@@ -795,7 +794,7 @@ class KMeans(BaseEstimator, ClusterMixin, TransformerMixin):
                 n_jobs=self.n_jobs)
         return self
 
-    def fit_predict(self, X):
+    def fit_predict(self, X, y=None):
         """Compute cluster centers and predict cluster index for each sample.
 
         Convenience method; equivalent to calling fit(X) followed by
@@ -832,7 +831,7 @@ class KMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         X_new : array, shape [n_samples, k]
             X transformed in the new space.
         """
-        check_is_fitted(self, 'cluster_centers_') 
+        check_is_fitted(self, 'cluster_centers_')
 
         X = self._check_test_data(X)
         return self._transform(X)
@@ -858,13 +857,13 @@ class KMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         labels : array, shape [n_samples,]
             Index of the cluster each sample belongs to.
         """
-        check_is_fitted(self, 'cluster_centers_') 
+        check_is_fitted(self, 'cluster_centers_')
 
         X = self._check_test_data(X)
         x_squared_norms = row_norms(X, squared=True)
         return _labels_inertia(X, x_squared_norms, self.cluster_centers_)[0]
 
-    def score(self, X):
+    def score(self, X, y=None):
         """Opposite of the value of X on the K-means objective.
 
         Parameters
@@ -877,7 +876,7 @@ class KMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         score : float
             Opposite of the value of X on the K-means objective.
         """
-        check_is_fitted(self, 'cluster_centers_') 
+        check_is_fitted(self, 'cluster_centers_')
 
         X = self._check_test_data(X)
         x_squared_norms = row_norms(X, squared=True)
@@ -1429,7 +1428,7 @@ class MiniBatchKMeans(KMeans):
         labels : array, shape [n_samples,]
             Index of the cluster each sample belongs to.
         """
-        check_is_fitted(self, 'cluster_centers_') 
+        check_is_fitted(self, 'cluster_centers_')
 
         X = self._check_test_data(X)
         return self._labels_inertia_minibatch(X)[0]

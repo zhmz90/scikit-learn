@@ -13,7 +13,7 @@ from .validation import (as_float_array,
                          check_random_state, column_or_1d, check_array,
                          check_consistent_length, check_X_y, indexable,
                          check_symmetric)
-from .class_weight import compute_class_weight
+from .class_weight import compute_class_weight, compute_sample_weight
 from ..externals.joblib import cpu_count
 
 
@@ -21,9 +21,10 @@ __all__ = ["murmurhash3_32", "as_float_array",
            "assert_all_finite", "check_array",
            "warn_if_not_float",
            "check_random_state",
-           "compute_class_weight",
+           "compute_class_weight", "compute_sample_weight",
            "column_or_1d", "safe_indexing",
-           "check_consistent_length", "check_X_y", 'indexable']
+           "check_consistent_length", "check_X_y", 'indexable',
+           "check_symmetric"]
 
 
 class deprecated(object):
@@ -185,7 +186,7 @@ def resample(*arrays, **options):
     -------
     resampled_arrays : sequence of arrays or scipy.sparse matrices with same \
     shape[0]
-        Sequence of resampled views of the collections. The original arrays are 
+        Sequence of resampled views of the collections. The original arrays are
         not impacted.
 
     Examples
@@ -223,7 +224,6 @@ def resample(*arrays, **options):
 
     See also
     --------
-    :class:`sklearn.cross_validation.Bootstrap`
     :func:`sklearn.utils.shuffle`
     """
     random_state = check_random_state(options.pop('random_state', None))

@@ -6,11 +6,11 @@
 
 import numpy as np
 
+from .base import BaseEstimator, RegressorMixin
+from .metrics.pairwise import pairwise_kernels
+from .linear_model.ridge import _solve_cholesky_kernel
 from .utils import check_X_y
-from sklearn.base import BaseEstimator, RegressorMixin
-from sklearn.metrics.pairwise import pairwise_kernels
-from sklearn.linear_model.ridge import _solve_cholesky_kernel
-from sklearn.utils.validation import check_is_fitted
+from .utils.validation import check_is_fitted
 
 
 class KernelRidge(BaseEstimator, RegressorMixin):
@@ -141,7 +141,7 @@ class KernelRidge(BaseEstimator, RegressorMixin):
         self : returns an instance of self.
         """
         # Convert data
-        X, y = check_X_y(X, y, multi_output=True)
+        X, y = check_X_y(X, y, accept_sparse=("csr", "csc"), multi_output=True)
 
         n_samples = X.shape[0]
         K = self._get_kernel(X)

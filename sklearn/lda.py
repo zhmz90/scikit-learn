@@ -22,6 +22,7 @@ from .covariance import ledoit_wolf, empirical_covariance, shrunk_covariance
 from .utils.multiclass import unique_labels
 from .utils import check_array, check_X_y
 from .utils.validation import check_is_fitted
+from .utils.fixes import bincount
 from .preprocessing import StandardScaler
 
 
@@ -150,6 +151,7 @@ class LDA(BaseEstimator, LinearClassifierMixin, TransformerMixin):
           - None: no shrinkage (default).
           - 'auto': automatic shrinkage using the Ledoit-Wolf lemma.
           - float between 0 and 1: fixed shrinkage parameter.
+
         Note that shrinkage works only with 'lsqr' and 'eigen' solvers.
 
     priors : array, optional, shape (n_classes,)
@@ -414,7 +416,7 @@ class LDA(BaseEstimator, LinearClassifierMixin, TransformerMixin):
 
         if self.priors is None:  # estimate priors from sample
             _, y_t = np.unique(y, return_inverse=True)  # non-negative ints
-            self.priors_ = np.bincount(y_t) / float(len(y))
+            self.priors_ = bincount(y_t) / float(len(y))
         else:
             self.priors_ = self.priors
 
@@ -448,13 +450,13 @@ class LDA(BaseEstimator, LinearClassifierMixin, TransformerMixin):
         X_new : array, shape (n_samples, n_components)
             Transformed data.
         """
-        check_is_fitted(self, ['xbar_', 'scalings_'], all_or_any=any)
-
-        X = check_array(X)
         if self.solver == 'lsqr':
             raise NotImplementedError("transform not implemented for 'lsqr' "
                                       "solver (use 'svd' or 'eigen').")
-        elif self.solver == 'svd':
+        check_is_fitted(self, ['xbar_', 'scalings_'], all_or_any=any)
+
+        X = check_array(X)
+        if self.solver == 'svd':
             X_new = np.dot(X - self.xbar_, self.scalings_)
         elif self.solver == 'eigen':
             X_new = np.dot(X, self.scalings_)

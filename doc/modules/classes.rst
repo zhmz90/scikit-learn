@@ -70,7 +70,6 @@ Classes
    cluster.MiniBatchKMeans
    cluster.MeanShift
    cluster.SpectralClustering
-   cluster.Ward
 
 Functions
 ---------
@@ -167,6 +166,7 @@ Classes
    cross_validation.LeaveOneOut
    cross_validation.LeavePLabelOut
    cross_validation.LeavePOut
+   cross_validation.PredefinedSplit
    cross_validation.StratifiedKFold
    cross_validation.ShuffleSplit
    cross_validation.StratifiedShuffleSplit
@@ -767,6 +767,7 @@ details.
    metrics.accuracy_score
    metrics.auc
    metrics.average_precision_score
+   metrics.brier_score_loss
    metrics.classification_report
    metrics.confusion_matrix
    metrics.f1_score
@@ -783,6 +784,7 @@ details.
    metrics.roc_auc_score
    metrics.roc_curve
    metrics.zero_one_loss
+   metrics.brier_score_loss
 
 Regression metrics
 ------------------
@@ -1006,6 +1008,33 @@ See the :ref:`metrics` section of the user guide for further details.
    :template: class.rst
 
    neural_network.BernoulliRBM
+
+
+.. _calibration_ref:
+
+:mod:`sklearn.calibration`: Probability Calibration
+===================================================
+
+.. automodule:: sklearn.calibration
+   :no-members:
+   :no-inherited-members:
+
+**User guide:** See the :ref:`calibration` section for further details.
+
+.. currentmodule:: sklearn
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   calibration.CalibratedClassifierCV
+
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   calibration.calibration_curve
 
 
 .. _cross_decomposition_ref:

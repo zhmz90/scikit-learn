@@ -12,7 +12,6 @@ from .base import BaseEstimator, ClassifierMixin, RegressorMixin
 from .utils import check_random_state
 from .utils.validation import check_array
 from .utils.validation import check_consistent_length
-from .utils import deprecated
 from .utils.random import random_choice_csc
 from .utils.stats import _weighted_percentile
 from .utils.multiclass import class_distribution
@@ -360,13 +359,6 @@ class DummyRegressor(BaseEstimator, RegressorMixin):
         self.constant = constant
         self.quantile = quantile
 
-    @property
-    @deprecated('This will be removed in version 0.17')
-    def y_mean_(self):
-        if self.strategy == 'mean':
-            return self.constant_
-        raise AttributeError
-
     def fit(self, X, y, sample_weight=None):
         """Fit the random regressor.
 
@@ -435,7 +427,7 @@ class DummyRegressor(BaseEstimator, RegressorMixin):
 
             self.constant = check_array(self.constant,
                                         accept_sparse=['csr', 'csc', 'coo'],
-                                        ensure_2d=False)
+                                        ensure_2d=False, ensure_min_samples=0)
 
             if self.output_2d_ and self.constant.shape[0] != y.shape[1]:
                 raise ValueError(
